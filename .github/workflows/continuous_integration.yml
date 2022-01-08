@@ -44,4 +44,4 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Run tests
-      run: python -m tests.test_v1_client
+      run: python -m unittest discover tests
