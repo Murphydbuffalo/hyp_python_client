@@ -2,7 +2,7 @@ import unittest
 import betamax
 import requests
 
-from hyp.v1 import HypClient
+from src.hyp.v1 import HypClient
 
 CASSETTE_LIBRARY_DIR = 'tests/cassettes/'
 
