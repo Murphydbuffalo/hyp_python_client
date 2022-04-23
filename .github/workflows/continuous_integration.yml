@@ -21,7 +21,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Lint application code
-        run: python -m flake8 --select=C,E,F,W,S,B,B9 --ignore=S106 --max-line-length=100 src/hyp
+        run: python -m flake8 --select=C,E,F,W,S,B,B9 --ignore=S106 --max-line-length=100 src/hyp_client
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Lint test code
