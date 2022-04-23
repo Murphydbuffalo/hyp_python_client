@@ -65,6 +65,17 @@ class TestAssignment(unittest.TestCase):
             self.assertEqual(response["message"], "success")
             self.assertEqual(response["payload"]["variant_name"], "v1")
 
+    def test_try_assignment(self):
+        with self.recorder.use_cassette("assignment-try-assignment"):
+            with self.assertLogs("hyp_python_client", "INFO") as log_capture:
+                variant = self.client.try_assignment(participant_id="fuzzybear", experiment_id=8, fallback="this-can-be-anything")
+                self.assertEqual(variant, "v2")
+                self.assertEqual(log_capture.output, ["INFO:hyp_python_client:Successfully got assignment for participant fuzzybear in experiment 8."])
+
+                variant = self.client.try_assignment(participant_id="sillybear", experiment_id=888, fallback="this-can-be-anything")
+                self.assertEqual(variant, "this-can-be-anything")
+                self.assertEqual(log_capture.output[-1], "WARNING:hyp_python_client:Failed to get assignment for participant sillybear in experiment 888. Returning fallback this-can-be-anything.")
+
 
 if __name__ == '__main__':
     unittest.main()

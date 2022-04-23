@@ -52,6 +52,17 @@ class TestConversion(unittest.TestCase):
             self.assertEqual(response["message"], "success")
             self.assertEqual(response["payload"]["converted"], True)
 
+    def test_try_conversion(self):
+        with self.recorder.use_cassette("conversion-try-conversion"):
+            with self.assertLogs("hyp_python_client", "INFO") as log_capture:
+                conversion = self.client.try_conversion(participant_id="fuzzybear", experiment_id=8)
+                self.assertEqual(conversion, True)
+                self.assertEqual(log_capture.output, ["INFO:hyp_python_client:Successfully converted participant fuzzybear in experiment 8."])
+
+                conversion = self.client.try_conversion(participant_id="sillybear", experiment_id=888)
+                self.assertEqual(conversion, False)
+                self.assertEqual(log_capture.output[-1], "WARNING:hyp_python_client:Failed to convert participant sillybear in experiment 888. Returning False.")
+
 
 if __name__ == '__main__':
     unittest.main()
