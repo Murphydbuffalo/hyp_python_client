@@ -24,3 +24,11 @@ client.assignment(participant_id="fuzzybear", experiment_id=13)
 client.conversion(participant_id="fuzzybear", experiment_id=13)
 # {'payload': '', 'message': 'No variant assignment for participant fuzzybear in experiment 8 was found. Participants must be assigned to a variant before conversion can be recorded.', 'status_code': 404}
 ```
+
+# Developing and running the tests
+We recommend using a virtual environment to isolate your installed packages.
+
+```python
+python -m pip install -r requirements.txt
+python -m unittest discover tests
+```
