@@ -8,7 +8,7 @@ pip install hyp-python-client
 
 # Usage
 ```python
-from hyp.v1 import HypClient
+from hyp_client.v1 import HypClient
 
 client = HypClient("PRODUCTION/HYP/5ab8d3d8-6eca-4e11-9203-1b64faea1f33")
 client.assignment(participant_id="fuzzybear", experiment_id=8)
