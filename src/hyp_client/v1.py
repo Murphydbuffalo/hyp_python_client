@@ -8,28 +8,6 @@ class HypClient:
         self.session = session
         self.logger = logging.getLogger("hyp_python_client")
 
-    def try_assignment(self, participant_id, experiment_id, fallback):
-        if participant_id is None or experiment_id is None:
-            missing_data = []
-            if participant_id is None:
-                missing_data.append("participant ID")
-
-            if experiment_id is None:
-                missing_data.append("experiment ID")
-
-            missing_data_message = " and ".join(missing_data)
-            self.logger.warning(f'Failed to get assignment due to missing {missing_data_message}. Returning fallback {fallback}.')
-            return fallback
-
-        response = self.assignment(participant_id, experiment_id)
-
-        if response["message"] == "success":
-            self.logger.info(f'Successfully got assignment for participant {participant_id} in experiment {experiment_id}.')
-            return response["payload"]["variant_name"]
-        else:
-            self.logger.warning(f'Failed to get assignment for participant {participant_id} in experiment {experiment_id}. Returning fallback {fallback}.')
-            return fallback
-
     def assignment(self, participant_id, experiment_id):
         response = self.session.post(
             f'https://app.onhyp.com/api/v1/assign/{participant_id}/{experiment_id}',
@@ -41,29 +19,6 @@ class HypClient:
 
         return result
 
-    def try_conversion(self, participant_id, experiment_id):
-        if participant_id is None or experiment_id is None:
-            missing_data = []
-            if participant_id is None:
-                missing_data.append("participant ID")
-
-            if experiment_id is None:
-                missing_data.append("experiment ID")
-
-            missing_data_message = " and ".join(missing_data)
-
-            self.logger.warning(f'Failed to convert due to missing {missing_data_message}. Returning False.')
-            return False
-
-        response = self.conversion(participant_id, experiment_id)
-
-        if response["message"] == "success":
-            self.logger.info(f'Successfully converted participant {participant_id} in experiment {experiment_id}.')
-            return response["payload"]["converted"]
-        else:
-            self.logger.warning(f'Failed to convert participant {participant_id} in experiment {experiment_id}. Returning False.')
-            return False
-
     def conversion(self, participant_id, experiment_id):
         response = self.session.patch(
             f'https://app.onhyp.com/api/v1/convert/{participant_id}/{experiment_id}',
@@ -74,3 +29,35 @@ class HypClient:
         result["status_code"] = response.status_code
 
         return result
+
+    def try_api_call(self, method_name, participant_id, experiment_id, fallback):
+        if participant_id is None or experiment_id is None:
+            missing_data = []
+            if participant_id is None:
+                missing_data.append("participant ID")
+
+            if experiment_id is None:
+                missing_data.append("experiment ID")
+
+            missing_data_message = " and ".join(missing_data)
+            self.logger.warning(f'{method_name} failed due to missing {missing_data_message}. Returning fallback {fallback}.')
+            return fallback
+
+        response = getattr(self, method_name)(participant_id, experiment_id)
+
+        if response["message"] == "success":
+            self.logger.info(f'{method_name} successful for participant {participant_id} in experiment {experiment_id}.')
+            if method_name == "assignment":
+                return response["payload"]["variant_name"]
+            elif method_name == "conversion":
+                return response["payload"]["converted"]
+
+        else:
+            self.logger.warning(f'{method_name} failed for participant {participant_id} in experiment {experiment_id}. Returning fallback {fallback}.')
+            return fallback
+
+    def try_assignment(self, participant_id, experiment_id, fallback):
+        return self.try_api_call("assignment", participant_id, experiment_id, fallback)
+
+    def try_conversion(self, participant_id, experiment_id):
+        return self.try_api_call("conversion", participant_id, experiment_id, fallback=False)
