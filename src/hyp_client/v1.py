@@ -11,7 +11,7 @@ class HypClient:
     def assignment(self, participant_id, experiment_id):
         response = self.session.post(
             f'https://app.onhyp.com/api/v1/assign/{participant_id}/{experiment_id}',
-            headers={'X_HYP_TOKEN': self.access_token},
+            headers={'X_HYP_TOKEN': self.access_token, 'Content-Type': 'application/json'},
         )
 
         result = response.json()
@@ -22,7 +22,7 @@ class HypClient:
     def conversion(self, participant_id, experiment_id):
         response = self.session.patch(
             f'https://app.onhyp.com/api/v1/convert/{participant_id}/{experiment_id}',
-            headers={'X_HYP_TOKEN': self.access_token},
+            headers={'X_HYP_TOKEN': self.access_token, 'Content-Type': 'application/json'},
         )
 
         result = response.json()
