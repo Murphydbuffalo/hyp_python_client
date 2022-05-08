@@ -74,19 +74,27 @@ will return the provided `fallback` and `try_conversion` will return `False`.
 Regardless of whether or not the API call is successful, these methods also log
 out info about what has happened. They use a logger named `"hyp_python_client"`
 and log out at the `info` level if the API call is successful and at the `warning`
-level if the call was unsuccessful. The log messages look like this:
+level if the call was unsuccessful. The log messages will pass include any error
+message from the server and look like this:
 ```python
 variant = self.client.try_assignment(participant_id="fuzzybear", experiment_id=8, fallback="some variant name")
-# => Successfully got assignment for participant fuzzybear in experiment 8.
+# => assignment successful for participant fuzzybear in experiment 8.
 
 variant = self.client.try_assignment(participant_id="fuzzybear", experiment_id=13, fallback="some variant name")
-# => Failed to get assignment for participant fuzzybear in experiment 13 Returning fallback some variant name.
+# => assignment failed for participant sillybear in experiment 888. Error: No experiment with ID 13 was found. Returning fallback some variant name.
+
+# Missing data:
+variant = self.client.try_assignment(participant_id=None, experiment_id=None, fallback="some variant name")
+# => assignment failed due to missing participant ID and experiment ID. Returning fallback some variant name.
 
 converted = self.client.try_conversion(participant_id="fuzzybear", experiment_id=8)
-# => Successfully converted participant fuzzybear in experiment 8.
+# => conversion successful for participant fuzzybear in experiment 8.
 
 converted = self.client.try_conversion(participant_id="fuzzybear", experiment_id=13)
-# => Failed to convert participant fuzzybear in experiment 13.
+# => conversion failed for participant sillybear in experiment 13. Error: No variant assignment for participant sillybear in experiment 888 was found. Participants must be assigned to a variant before conversion can be recorded. Returning fallback False.
+
+converted = self.client.try_conversion(participant_id="fuzzybear", experiment_id=None)
+# => conversion failed due to missing experiment ID. Returning fallback False.
 ```
 
 # Developing and running the tests
