@@ -9,6 +9,10 @@ class HypClient:
         self.logger = logging.getLogger("hyp_python_client")
 
     def try_assignment(self, participant_id, experiment_id, fallback):
+        if participant_id is None or experiment_id is None:
+            self.logger.warning(f'Missing participant ID or experiment ID. Returning fallback {fallback}.')
+            return fallback
+
         response = self.assignment(participant_id, experiment_id)
 
         if response["message"] == "success":
@@ -30,6 +34,10 @@ class HypClient:
         return result
 
     def try_conversion(self, participant_id, experiment_id):
+        if participant_id is None or experiment_id is None:
+            self.logger.warning('Missing participant ID or experiment ID. Returning False.')
+            return False
+
         response = self.conversion(participant_id, experiment_id)
 
         if response["message"] == "success":
