@@ -10,7 +10,7 @@ class HypClient:
 
     def try_assignment(self, participant_id, experiment_id, fallback):
         if participant_id is None or experiment_id is None:
-            self.logger.warning(f'Missing participant ID or experiment ID. Returning fallback {fallback}.')
+            self.logger.warning(f'Failed to get assignment due to missing participant ID or experiment ID. Returning fallback {fallback}.')
             return fallback
 
         response = self.assignment(participant_id, experiment_id)
@@ -35,7 +35,7 @@ class HypClient:
 
     def try_conversion(self, participant_id, experiment_id):
         if participant_id is None or experiment_id is None:
-            self.logger.warning('Missing participant ID or experiment ID. Returning False.')
+            self.logger.warning('Failed to convert due to missing participant ID or experiment ID. Returning False.')
             return False
 
         response = self.conversion(participant_id, experiment_id)
