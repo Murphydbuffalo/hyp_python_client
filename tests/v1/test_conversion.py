@@ -67,12 +67,17 @@ class TestConversion(unittest.TestCase):
         with self.assertLogs("hyp_python_client", "INFO") as log_capture:
             conversion = self.client.try_conversion(participant_id=None, experiment_id=8)
             self.assertEqual(conversion, False)
-            self.assertEqual(log_capture.output[-1], "WARNING:hyp_python_client:Failed to convert due to missing participant ID or experiment ID. Returning False.")
+            self.assertEqual(log_capture.output[-1], "WARNING:hyp_python_client:Failed to convert due to missing participant ID. Returning False.")
 
         with self.assertLogs("hyp_python_client", "INFO") as log_capture:
             conversion = self.client.try_conversion(participant_id="fuzzybear", experiment_id=None)
             self.assertEqual(conversion, False)
-            self.assertEqual(log_capture.output[-1], "WARNING:hyp_python_client:Failed to convert due to missing participant ID or experiment ID. Returning False.")
+            self.assertEqual(log_capture.output[-1], "WARNING:hyp_python_client:Failed to convert due to missing experiment ID. Returning False.")
+
+        with self.assertLogs("hyp_python_client", "INFO") as log_capture:
+            conversion = self.client.try_conversion(participant_id=None, experiment_id=None)
+            self.assertEqual(conversion, False)
+            self.assertEqual(log_capture.output[-1], "WARNING:hyp_python_client:Failed to convert due to missing participant ID and experiment ID. Returning False.")
 
 if __name__ == '__main__':
     unittest.main()
