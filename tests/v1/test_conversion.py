@@ -79,5 +79,6 @@ class TestConversion(unittest.TestCase):
             self.assertEqual(conversion, False)
             self.assertEqual(log_capture.output[-1], "WARNING:hyp_python_client:conversion failed due to missing participant ID and experiment ID. Returning fallback False.")
 
+
 if __name__ == '__main__':
     unittest.main()
