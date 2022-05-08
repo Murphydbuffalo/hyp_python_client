@@ -61,7 +61,7 @@ class TestConversion(unittest.TestCase):
 
                 conversion = self.client.try_conversion(participant_id="sillybear", experiment_id=888)
                 self.assertEqual(conversion, False)
-                self.assertEqual(log_capture.output[-1], "WARNING:hyp_python_client:conversion failed for participant sillybear in experiment 888. Returning fallback False.")
+                self.assertEqual(log_capture.output[-1], "WARNING:hyp_python_client:conversion failed for participant sillybear in experiment 888. Error: No variant assignment for participant sillybear in experiment 888 was found. Participants must be assigned to a variant before conversion can be recorded. Returning fallback False.")
 
     def test_try_conversion_missing_data(self):
         with self.assertLogs("hyp_python_client", "INFO") as log_capture:

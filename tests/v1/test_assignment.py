@@ -74,7 +74,7 @@ class TestAssignment(unittest.TestCase):
 
                 variant = self.client.try_assignment(participant_id="sillybear", experiment_id=888, fallback="this-can-be-anything")
                 self.assertEqual(variant, "this-can-be-anything")
-                self.assertEqual(log_capture.output[-1], "WARNING:hyp_python_client:assignment failed for participant sillybear in experiment 888. Returning fallback this-can-be-anything.")
+                self.assertEqual(log_capture.output[-1], "WARNING:hyp_python_client:assignment failed for participant sillybear in experiment 888. Error: No experiment with ID 888 was found. Returning fallback this-can-be-anything.")
 
     def test_try_assignment_missing_data(self):
         with self.assertLogs("hyp_python_client", "INFO") as log_capture:

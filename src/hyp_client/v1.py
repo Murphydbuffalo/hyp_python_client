@@ -51,9 +51,8 @@ class HypClient:
                 return response["payload"]["variant_name"]
             elif method_name == "conversion":
                 return response["payload"]["converted"]
-
         else:
-            self.logger.warning(f'{method_name} failed for participant {participant_id} in experiment {experiment_id}. Returning fallback {fallback}.')
+            self.logger.warning(f'{method_name} failed for participant {participant_id} in experiment {experiment_id}. Error: {response["message"]} Returning fallback {fallback}.')
             return fallback
 
     def try_assignment(self, participant_id, experiment_id, fallback):
