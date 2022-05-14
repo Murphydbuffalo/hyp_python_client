@@ -3,9 +3,13 @@ import requests
 
 
 class HypClient:
-    def __init__(self, access_token, session=requests.Session()):
+    def __init__(self, access_token, session=None):
+        if session is None:
+            self.session = requests.Session()
+        else:
+            self.session = session
+
         self.access_token = access_token
-        self.session = session
         self.logger = logging.getLogger("hyp_python_client")
 
     def assignment(self, participant_id, experiment_id):
