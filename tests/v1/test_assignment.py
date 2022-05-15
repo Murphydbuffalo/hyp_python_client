@@ -70,11 +70,27 @@ class TestAssignment(unittest.TestCase):
             with self.assertLogs("hyp_python_client", "INFO") as log_capture:
                 variant = self.client.try_assignment(participant_id="fuzzybear", experiment_id=8, fallback="this-can-be-anything")
                 self.assertEqual(variant, "v2")
-                self.assertEqual(log_capture.output, ["INFO:hyp_python_client:Successfully got assignment for participant fuzzybear in experiment 8."])
+                self.assertEqual(log_capture.output, ["INFO:hyp_python_client:assignment successful for participant fuzzybear in experiment 8."])
 
                 variant = self.client.try_assignment(participant_id="sillybear", experiment_id=888, fallback="this-can-be-anything")
                 self.assertEqual(variant, "this-can-be-anything")
-                self.assertEqual(log_capture.output[-1], "WARNING:hyp_python_client:Failed to get assignment for participant sillybear in experiment 888. Returning fallback this-can-be-anything.")
+                self.assertEqual(log_capture.output[-1], "WARNING:hyp_python_client:assignment failed for participant sillybear in experiment 888. Error: No experiment with ID 888 was found. Returning fallback this-can-be-anything.")
+
+    def test_try_assignment_missing_data(self):
+        with self.assertLogs("hyp_python_client", "INFO") as log_capture:
+            variant = self.client.try_assignment(participant_id=None, experiment_id=8, fallback="this-can-be-anything")
+            self.assertEqual(variant, "this-can-be-anything")
+            self.assertEqual(log_capture.output[-1], "WARNING:hyp_python_client:assignment failed due to missing participant ID. Returning fallback this-can-be-anything.")
+
+        with self.assertLogs("hyp_python_client", "INFO") as log_capture:
+            variant = self.client.try_assignment(participant_id="fuzzybear", experiment_id=None, fallback="this-can-be-anything")
+            self.assertEqual(variant, "this-can-be-anything")
+            self.assertEqual(log_capture.output[-1], "WARNING:hyp_python_client:assignment failed due to missing experiment ID. Returning fallback this-can-be-anything.")
+
+        with self.assertLogs("hyp_python_client", "INFO") as log_capture:
+            variant = self.client.try_assignment(participant_id=None, experiment_id=None, fallback="this-can-be-anything")
+            self.assertEqual(variant, "this-can-be-anything")
+            self.assertEqual(log_capture.output[-1], "WARNING:hyp_python_client:assignment failed due to missing participant ID and experiment ID. Returning fallback this-can-be-anything.")
 
 
 if __name__ == '__main__':

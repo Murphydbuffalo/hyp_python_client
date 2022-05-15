@@ -57,11 +57,27 @@ class TestConversion(unittest.TestCase):
             with self.assertLogs("hyp_python_client", "INFO") as log_capture:
                 conversion = self.client.try_conversion(participant_id="fuzzybear", experiment_id=8)
                 self.assertEqual(conversion, True)
-                self.assertEqual(log_capture.output, ["INFO:hyp_python_client:Successfully converted participant fuzzybear in experiment 8."])
+                self.assertEqual(log_capture.output, ["INFO:hyp_python_client:conversion successful for participant fuzzybear in experiment 8."])
 
                 conversion = self.client.try_conversion(participant_id="sillybear", experiment_id=888)
                 self.assertEqual(conversion, False)
-                self.assertEqual(log_capture.output[-1], "WARNING:hyp_python_client:Failed to convert participant sillybear in experiment 888. Returning False.")
+                self.assertEqual(log_capture.output[-1], "WARNING:hyp_python_client:conversion failed for participant sillybear in experiment 888. Error: No variant assignment for participant sillybear in experiment 888 was found. Participants must be assigned to a variant before conversion can be recorded. Returning fallback False.")
+
+    def test_try_conversion_missing_data(self):
+        with self.assertLogs("hyp_python_client", "INFO") as log_capture:
+            conversion = self.client.try_conversion(participant_id=None, experiment_id=8)
+            self.assertEqual(conversion, False)
+            self.assertEqual(log_capture.output[-1], "WARNING:hyp_python_client:conversion failed due to missing participant ID. Returning fallback False.")
+
+        with self.assertLogs("hyp_python_client", "INFO") as log_capture:
+            conversion = self.client.try_conversion(participant_id="fuzzybear", experiment_id=None)
+            self.assertEqual(conversion, False)
+            self.assertEqual(log_capture.output[-1], "WARNING:hyp_python_client:conversion failed due to missing experiment ID. Returning fallback False.")
+
+        with self.assertLogs("hyp_python_client", "INFO") as log_capture:
+            conversion = self.client.try_conversion(participant_id=None, experiment_id=None)
+            self.assertEqual(conversion, False)
+            self.assertEqual(log_capture.output[-1], "WARNING:hyp_python_client:conversion failed due to missing participant ID and experiment ID. Returning fallback False.")
 
 
 if __name__ == '__main__':
