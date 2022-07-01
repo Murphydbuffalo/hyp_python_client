@@ -1,5 +1,5 @@
 betamax==0.8.1
-certifi==2021.10.8
+certifi==2022.6.15
 charset-normalizer==2.0.12
 flake8==4.0.1
 idna==3.3
